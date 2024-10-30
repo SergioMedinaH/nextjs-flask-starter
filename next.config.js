@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: ['yt3.googleusercontent.com']
+  },
   rewrites: async () => {
     return [
       {
@@ -11,6 +14,7 @@ const nextConfig = {
       },
     ]
   },
+  //reactStrictMode: false,
 }
 
 module.exports = nextConfig

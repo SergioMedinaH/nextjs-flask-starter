@@ -37,3 +37,19 @@ export const getLineaColorText = (linea: string) => {
           return 'text-gray-500';  // Línea desconocida - Gris
   }
 };
+export const getLineaColorBg = (linea: string) => {
+    switch (linea) {
+        case 'A':
+            return 'bg-lineaA';  // Línea A - Azul
+        case 'B':
+            return 'bg-lineaB';  // Línea B - Rojo
+        case 'C':
+            return 'bg-lineaC';  // Línea C - Verde
+        case 'D':
+            return 'bg-lineaD';  // Línea D - Amarillo
+        case 'E':
+            return 'bg-lineaE';  // Línea E - Púrpura
+        default:
+            return 'text-gray-500';  // Línea desconocida - Gris
+    }
+  };

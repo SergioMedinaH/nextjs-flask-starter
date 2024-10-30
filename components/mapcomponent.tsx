@@ -1,55 +1,68 @@
 'use client';
+
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup , Polyline, Tooltip} from 'react-leaflet';
 import L from 'leaflet';
 import { Marcador } from '@/components/marcador';
 import { getLineaColorHEX } from '@/lib/utils';
+import React, { useEffect, useState } from 'react';
 
 interface MarcadorProps {
-    paradas: { value: string; label: string, lat: number, lng: number, linea: string }[]
+    paradas: { value: string; label: string, lat: number, lng: number, linea: string }[],
+    onSelectOrigen: (value: string) => void,
+    onSelectDestino: (value: string) => void,
+    trayecto: Trayecto[],
+    transbordos: Transbordo[]
+}
+interface Parada {
+  value: string;
+  label: string;
+  lat: number;
+  lng: number;
+  linea: string;
+}
+interface Trayecto {
+  linea: string;
+  paradas: Parada[];
+  tiempos: number[];
+}
+interface Transbordo {
+  origen: string;
+  destino: string;
 }
 
-const MapComponent = ({paradas}: MarcadorProps) => {
-    //delete L.Icon.Default.prototype._getIconUrl;
-    //L.Icon.Default.mergeOptions({
-    //iconRetinaUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon-2x.png',
-    //iconUrl: 'https://unpkg.com/leaflet/dist/images/marker-icon.png',
-    //shadowUrl: 'https://unpkg.com/leaflet/dist/images/marker-shadow.png',
-    //});
-
-    const createCircleIcon = (color: string, opacity: number) => {
-    return L.divIcon({
-        className: 'custom-circle-icon',
-        html: `<div style="background-color: ${color}; width: 15px; height: 15px; border-radius: 50%; opacity: ${opacity};"></div>`,
-        iconSize: [12, 12], // Tamaño del icono
-        iconAnchor: [6, 6], // Punto del icono que se alinea con las coordenadas del marcador
-        popupAnchor: [0, -8], // Punto en el que se ancla el popup en relación al icono
-    });
-    };
-
-    const center: [number, number] = [-34.605556, -58.402826];
+const MapComponent = ({paradas, onSelectOrigen,onSelectDestino, trayecto, transbordos}: MarcadorProps) => {
+  console.log(trayecto)
+    const center: [number, number] = [-34.608556, -58.391826];
     // Definir el radio en grados (aproximado a 100 km)
-    const kmToDegrees = (km: number) => km / 111; // Aproximadamente 111 km por grado de latitud
-    const radius = kmToDegrees(10);
-    const bounds = L.latLngBounds(
-    [center[0] - radius, center[1] - radius],
-    [center[0] + radius, center[1] + radius]
-    );
+    const kmToDegrees = (km: number): number => km / 111; // Aproximadamente 111 km por grado de latitud
+
+    // Definir el radio en kilómetros
+    const radiusInKm = 10;
+
+    // Convertir el radio a grados
+    const radiusInDegrees = kmToDegrees(radiusInKm);
+
+    const bounds = {
+    northEast: [center[0] + radiusInDegrees, center[1] + radiusInDegrees],
+    southWest: [center[0] - radiusInDegrees, center[1] - radiusInDegrees],
+    };
     return (
         <MapContainer 
         center={center} 
-        zoom={14} 
-        minZoom={13} 
+        zoom={15} 
+        minZoom={14} 
         maxZoom={18}
-        maxBounds={bounds}       // Limita el área desplazable
-        maxBoundsViscosity={1.0} // Para mantener la cámara dentro de los límites
+        //maxBounds={bounds}       // Limita el área desplazable
+        //maxBoundsViscosity={1.0} // Para mantener la cámara dentro de los límites
         className="flex-1"
       >
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" // Estilo CartoDB Positron
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         />
-        {paradas && paradas.map((parada) => (
+        {/*Metro entero*/}
+        {trayecto.length === 0 && paradas && paradas.map((parada) => (
           <Marcador
             key={parada.value}
             lat={parada.lat}
@@ -57,10 +70,12 @@ const MapComponent = ({paradas}: MarcadorProps) => {
             value={parada.value}
             label={parada.label}
             linea={parada.linea}
+            onSelectOrigen={onSelectOrigen}
+            onSelectDestino={onSelectDestino}
           />  
         ))}
-        
-        {['A', 'B', 'C', 'D', 'E'].map((linea) => {
+        {/*Metro entero*/}
+        {trayecto.length === 0 && ['A', 'B', 'C', 'D', 'E'].map((linea) => {
                 const estaciones = paradas.filter(p => p.linea === linea);
                 if (estaciones.length > 1) {
                     const latLngs = estaciones.map(p => L.latLng(p.lat, p.lng));
@@ -69,6 +84,42 @@ const MapComponent = ({paradas}: MarcadorProps) => {
                 }
                 return null; // Retornar null si no hay estaciones para esa línea
             })}
+        {/*Metro entero*/}
+        {trayecto.length === 0 && paradas && transbordos.map((transbordo, index) => {
+                const estaciones = paradas.filter(p => p.value === transbordo.origen || p.value === transbordo.destino);
+                if (estaciones.length > 1) {
+                    const latLngs = estaciones.map(p => L.latLng(p.lat, p.lng));
+                    const color = getLineaColorHEX("Transbordo");
+                    return <Polyline key={index} positions={latLngs} color={color} weight={5} opacity={1} dashArray={[5,10]}/>;
+                }
+                return null; // Retornar null si no hay estaciones para esa línea
+            })}
+
+
+        {/*Resultado*/}
+        {trayecto.length !== 0 && paradas && trayecto.map((linea, index) => {
+          const estaciones = linea.paradas;
+          const color = getLineaColorHEX(linea.linea);
+          return (
+            <React.Fragment key={index}>
+              {estaciones.map((parada) => (
+                <Marcador
+                  key={parada.value}
+                  lat={parada.lat}
+                  lng={parada.lng}
+                  value={parada.value}
+                  label={parada.label}
+                  linea={parada.linea}
+                  onSelectOrigen={onSelectOrigen}
+                  onSelectDestino={onSelectDestino}
+                />  
+              ))}
+              {estaciones.length > 1 && (
+                <Polyline positions={estaciones.map(p => L.latLng(p.lat, p.lng))} color={color} weight={5} opacity={1}dashArray={linea.linea === "Transbordo" ? [5,10] : "undefined" } />
+              )}
+            </React.Fragment>
+          );
+        })}
       </MapContainer>
     )
 }

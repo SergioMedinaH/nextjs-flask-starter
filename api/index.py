@@ -8,10 +8,14 @@ def get_route():
     origen = data.get("paradaOrigen")
     destino = data.get("paradaDestino")
     
-    respuesta = f"Este es el trayecto más corto desde {origen} hasta {destino}."
     
-    time.sleep(5)
-    return jsonify({"route": respuesta})
+    
+    
+    
+    ruta = [origen, "lima", "avdemayo", "moreno", "independencia", destino]
+    tiempos = [1, 2, 3, 4, 1]
+    
+    return jsonify({"ruta": ruta, "tiempos": tiempos})
 
 if __name__ == '__main__':
     app.run(debug=True)

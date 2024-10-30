@@ -23,15 +23,20 @@ interface BuscadorProps {
   paradas: { value: string; label: string, lat: number, lng: number, linea: string }[]
   texto: string
   onSelect: (value: string) => void 
+  selectedValue: string
 }
 
 export function Buscador({ 
     paradas, 
     texto, 
-    onSelect 
+    onSelect,
+    selectedValue,
 }: BuscadorProps) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState("")
+  React.useEffect(() => {
+    setValue(selectedValue)
+  }, [selectedValue])
 
   const handleSelect = (currentValue: string) => {
     const newValue = currentValue === value ? "" : currentValue
@@ -52,15 +57,14 @@ export function Buscador({
           
           {value
             ? <div className="flex gap-2">
-                <span className={cn(
-                'font-bold',
-                paradas.find((parada) => parada.value === value)?.linea === 'A' && 'text-lineaA',
-                paradas.find((parada) => parada.value === value)?.linea === 'B' && 'text-lineaB',
-                paradas.find((parada) => parada.value === value)?.linea === 'C' && 'text-lineaC',
-                paradas.find((parada) => parada.value === value)?.linea === 'D' && 'text-lineaD',
-                paradas.find((parada) => parada.value === value)?.linea === 'E' && 'text-lineaE',
-                )}
-                >{paradas.find((parada) => parada.value === value)?.linea}</span>
+                <div  className={cn(
+                          'w-5 h-5 font-bold rounded-sm flex text-center items-center justify-center text-white',
+                          paradas.find((parada) => parada.value === value)?.linea === 'A' && 'bg-lineaA',
+                          paradas.find((parada) => parada.value === value)?.linea === 'B' && 'bg-lineaB',
+                          paradas.find((parada) => parada.value === value)?.linea === 'C' && 'bg-lineaC',
+                          paradas.find((parada) => parada.value === value)?.linea === 'D' && 'bg-lineaD',
+                          paradas.find((parada) => parada.value === value)?.linea === 'E' && 'bg-lineaE',
+                          )}>{paradas.find((parada) => parada.value === value)?.linea}</div>
                 {paradas.find((parada) => parada.value === value)?.label}
             </div>
             
@@ -86,14 +90,14 @@ export function Buscador({
                       value === parada.value ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  <span className={cn(
-                'font-bold',
-                parada.linea === 'A' && 'text-lineaA',
-                parada.linea === 'B' && 'text-lineaB',
-                parada.linea === 'C' && 'text-lineaC',
-                parada.linea === 'D' && 'text-lineaD',
-                parada.linea === 'E' && 'text-lineaE',
-                )}>{parada.linea}</span>
+                  <div  className={cn(
+                          'w-5 h-5 font-bold rounded-sm flex text-center items-center justify-center text-white',
+                          parada.linea === 'A' && 'bg-lineaA',
+                          parada.linea === 'B' && 'bg-lineaB',
+                          parada.linea === 'C' && 'bg-lineaC',
+                          parada.linea === 'D' && 'bg-lineaD',
+                          parada.linea === 'E' && 'bg-lineaE',
+                          )}>{parada.linea}</div>
                   {parada.label}
                 </CommandItem>
               ))}
