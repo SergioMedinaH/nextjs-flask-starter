@@ -32,7 +32,6 @@ interface Transbordo {
 }
 
 const MapComponent = ({paradas, onSelectOrigen,onSelectDestino, trayecto, transbordos}: MarcadorProps) => {
-  console.log(trayecto)
     const center: [number, number] = [-34.608556, -58.391826];
     // Definir el radio en grados (aproximado a 100 km)
     const kmToDegrees = (km: number): number => km / 111; // Aproximadamente 111 km por grado de latitud

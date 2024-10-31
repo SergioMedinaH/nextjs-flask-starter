@@ -2,9 +2,15 @@
 //import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import { Buscador } from '@/components/ui/buscador';
-import {use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 //const MapComponent = dynamic(() => import('../components/mapcomponent'), { ssr: false });
-import MapComponent from '@/components/mapcomponent';
+
+
+
+//import MapComponent from '@/components/mapcomponent';
+
+
+
 //import dynamic from 'next/dynamic';
 //import Map from '@/components/map'
 //import dynamic from 'next/dynamic';
@@ -12,9 +18,9 @@ import MapComponent from '@/components/mapcomponent';
 //const MapComponent = dynamic(() => import('@/components/mapcomponent'), {
 //  ssr: false, // Esto asegura que el componente se renderice solo en el cliente
 //});
-
-import Map from '@/components/MapPrueba'
-import { ChevronRight, Loader, Loader2, LoaderCircle, X } from 'lucide-react';
+import "leaflet/dist/leaflet.css";
+//import Map from '@/components/MapPrueba'
+import { ChevronRight, LoaderCircle, X } from 'lucide-react';
 import TrayectoComponente from '@/components/trayecto';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
@@ -154,7 +160,6 @@ const transbordos: Transbordo[] = [
     }
   };
   const LimpiarResultado = () => {
-    console.log('Limpiar Resultado');
     setParadaOrigen('');
     setParadaDestino('');
   }
@@ -222,8 +227,6 @@ const transbordos: Transbordo[] = [
       paradasRuta = [];
       trayectos = [];
     }
-    console.log(paradasRuta);
-    console.log(trayectos);
     setTrayectosState(trayectos);
   }, [resultado]);
 
@@ -317,7 +320,9 @@ const transbordos: Transbordo[] = [
           }
         </div>
       </div>
-      {isClient && <MapComponent paradas={paradas} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>}
+      {isClient && <>Prueba Sin Mapa</>
+       //<MapComponent paradas={paradas} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
+       }
       
       {//<Map/>
       }
