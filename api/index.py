@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import time
 import networkx as nx
 import matplotlib.pyplot as plt
 import math
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 paradas = [
     # Línea A

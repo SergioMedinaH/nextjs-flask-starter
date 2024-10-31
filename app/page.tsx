@@ -40,7 +40,7 @@ export default function Home() {
   //const MapComponent = dynamic(() => import('../components/mapcomponent'), {
   //  ssr: false, // Esto asegura que el componente se renderice solo en el cliente
   //});
-  const isClient = typeof window !== 'undefined';
+  //const isClient = typeof window !== 'undefined';
 
 
   const paradas: Parada[] = [
@@ -320,7 +320,7 @@ const transbordos: Transbordo[] = [
           }
         </div>
       </div>
-      {isClient && <>Prueba Sin Mapa</>
+      {//isClient && <>Prueba Sin Mapa</>
        //<MapComponent paradas={paradas} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
        }
       
