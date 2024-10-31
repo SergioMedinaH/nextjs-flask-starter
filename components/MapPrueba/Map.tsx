@@ -5,9 +5,12 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, Tooltip } from "react
 function Map() {
     const markerPosition = [7.8731, -72.5031];
 
-    return(
-        <MapContainer
+    return(<></>)
+        
+        {/*
+            <MapContainer
             className=""
+            //@ts-ignore
             center={markerPosition}
             zoom={13}
             scrollWheelZoom={false}
@@ -19,7 +22,9 @@ function Map() {
 
             </TileLayer>
         </MapContainer>
-        )
+            */}
+        
+        
 }
 
 export default Map;
