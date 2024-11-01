@@ -40,6 +40,9 @@ export default function Home() {
   //const MapComponent = dynamic(() => import('../components/mapcomponent'), {
   //  ssr: false, // Esto asegura que el componente se renderice solo en el cliente
   //});
+
+
+
   //const isClient = typeof window !== 'undefined';
 
 
@@ -143,12 +146,12 @@ const transbordos: Transbordo[] = [
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/python`, {
+      const response = await fetch(`/api/index`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ paradaOrigen, paradaDestino }),
+        body: JSON.stringify({ paradaOrigen: paradaOrigen,  paradaDestino: paradaDestino }),
       });
 
       const data: ApiResponse = await response.json();
@@ -320,7 +323,7 @@ const transbordos: Transbordo[] = [
           }
         </div>
       </div>
-      {//isClient && <>Prueba Sin Mapa</>
+      {//isClient && 
        //<MapComponent paradas={paradas} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
        }
       

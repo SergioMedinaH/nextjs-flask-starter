@@ -1,12 +1,9 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import time
 import networkx as nx
 import matplotlib.pyplot as plt
 import math
+import json
 
-app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 paradas = [
     # Línea A
@@ -154,26 +151,30 @@ def heuristica(paradaActual: str, paradaDestino: str) -> float:
     return calcular_distancia(paradaActual, paradaDestino)
 
 
-    
+def handler(request):
+    """Maneja la solicitud de la función serverless."""
+    if request["method"] == "POST":
+        data = json.loads(request["body"])
+        origen, destino = data.get("paradaOrigen"), data.get("paradaDestino")
 
-@app.route("/api/python", methods=["POST"])
-def get_route():
-    data = request.json
-    origen = data.get("paradaOrigen")
-    destino = data.get("paradaDestino")
-    
-    
-    ruta = nx.astar_path(G1, origen, destino, heuristic = heuristica, weight="weight")
-    print(ruta)
-    
-    #ruta = [origen, "lima", "avdemayo", "moreno", "independencia", destino]
-    tiempos = [
-        G1[ruta[i]][ruta[i+1]]["weight"]
-        for i in range(len(ruta) - 1)
-    ]
-    #[1, 2, 3, 4, 1]
-    
-    return jsonify({"ruta": ruta, "tiempos": tiempos})
-
-if __name__ == '__main__':
-    app.run(debug=True)
+        # Genera la ruta utilizando A* en NetworkX
+        try:
+            ruta = nx.astar_path(G1, origen, destino, heuristic=heuristica, weight="weight")
+            tiempos = [G1[ruta[i]][ruta[i+1]]["weight"] for i in range(len(ruta) - 1)]
+            return {
+                "statusCode": 200,
+                "body": json.dumps({"ruta": ruta, "tiempos": tiempos}),
+                "headers": {"Content-Type": "application/json"}
+            }
+        except Exception as e:
+            return {
+                "statusCode": 500,
+                "body": json.dumps({"error": str(e)}),
+                "headers": {"Content-Type": "application/json"}
+            }
+    else:
+        return {
+            "statusCode": 405,
+            "body": json.dumps({"error": "Método no permitido"}),
+            "headers": {"Content-Type": "application/json"}
+        }
